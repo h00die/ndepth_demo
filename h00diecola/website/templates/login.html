@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+    <p>Welcome to h00die Cola administration.  This is a fake webapp to show how manual exploitation can
+       find vulnerabilities that automated scanners may not.
+    </p>
+    <p>This login screen is fake.  While authentication is required, any username and password will work
+       and grant all permissions (no user levels).
+    </p>
+    </div>
+    <div class="col-md-offset-5 col-md-3">
+      <div class="form-login">
+        <h4>Login</h4>
+        <form method="post" action={% url 'login' %}>
+          {% csrf_token %}
+          <span class="glyphicon glyphicon-user"></span>
+          <input type="text" id='username' class="form-control input-sm chat-input" name='username' placeholder="username">
+          </br>
+          <span class="glyphicon glyphicon-lock"></span>
+          <input type="text" id='password' class="form-control input-sm chat-input" name='password' placeholder="password">
+          </br>
+          <input class="btn btn-primary btn-md" type="submit" value="Submit">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

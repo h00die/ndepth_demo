@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="{% url 'home' %}"><span class="glyphicon glyphicon-home"> Home</span></a></li>
+        <li><a href="{% url 'config_page' %}"><span class="glyphicon glyphicon-download"> Backup</span></a></li>
+        <li class="active"><a href="{% url 'timezone' %}"><span class="glyphicon glyphicon-time"> Timezone</span></a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <h1 class="page-header">Change Timezone</h1>
+      <div class="row placeholders">
+        <h2 class="sub-header">Set New Timezone</h2>
+        <h4>Current: {{current}}</h4>
+        <form action="{% url 'timezone' %}" method="post">
+          {% csrf_token %}
+          <select name="timezone">
+            {% for t in list %}
+              <option value="{{t}}">{{t}}</option>
+            {% endfor %}
+          </select>
+          <input type="submit" value="Set Timezone">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

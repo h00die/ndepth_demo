@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+        <li class="active"><a href="{% url 'home' %}"><span class="glyphicon glyphicon-home"> Home</span></a></li>
+        <li><a href="{% url 'config_page' %}"><span class="glyphicon glyphicon-download"> Backup</span></a></li>
+        <li><a href="{% url 'timezone' %}"><span class="glyphicon glyphicon-time"> Timezone</span></a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </div>
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">Home</h1>
+    <div class="row placeholders panel-group">
+      <div class="panel panel-info col-sm-2" style="margin-top: 5px;">
+        <div class="panel-body">
+          <a href="#">
+            <span class="glyphicon glyphicon-signal large-icon text-info"></span>
+          </a>
+        </div>
+        <div class="panel-heading">
+          Fake Item
+        </div>
+      </div>
+      <div class="panel panel-primary col-sm-2">
+        <div class="panel-body">
+          <a href="{% url 'config_page' %}">
+            <span class="glyphicon glyphicon-file large-icon text-heading"></span>
+          </a>
+        </div>
+        <div class="panel-heading">
+          Backup Config
+        </div>
+      </div>
+      <div class="panel panel-success col-sm-2">
+        <div class="panel-body">
+          <a href="{% url 'timezone' %}">
+            <span class="glyphicon glyphicon-time large-icon text-success"></span>
+          </a>
+        </div>
+        <div class="panel-heading">
+          Set Timezone
+        </div>
+      </div>
+      <div class="panel panel-warning col-sm-2">
+        <div class="panel-body">
+          <a href="#">
+            <span class="glyphicon glyphicon-list-alt large-icon text-warning"></span>
+          </a>
+        </div>
+        <div class="panel-heading">
+          Fake Item
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

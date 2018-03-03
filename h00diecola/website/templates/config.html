@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="{% url 'home' %}"><span class="glyphicon glyphicon-home"> Home</span></a></li>
+        <li class="active"><a href="{% url 'config_page' %}"><span class="glyphicon glyphicon-download"> Backup</span></a></li>
+        <li><a href="{% url 'timezone' %}"><span class="glyphicon glyphicon-time"> Timezone</span></a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <h1 class="page-header">Config Backup</h1>
+      <div class="row placeholders">
+        <h2 class="sub-header">Create New Backup</h2>
+        <form action="/create_backup">
+          <input type="submit" value="Create Backup">
+        </form>
+        <hr>
+        <h2 class="sub-header">Download Backup</h2>
+          <select name="file" id="file">
+          {% for f in backups %}
+            <option value="{{f}}">{{f}}</option>
+          {% endfor %}
+          </select>
+          <input onclick="get_download_id()" type="submit" value="Download">
+          <script>
+          function getCookie(name) {
+              var cookieValue = null;
+              if (document.cookie && document.cookie !== '') {
+                  var cookies = document.cookie.split(';');
+                  for (var i = 0; i < cookies.length; i++) {
+                      var cookie = jQuery.trim(cookies[i]);
+                      // Does this cookie string begin with the name we want?
+                      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                          break;
+                      }
+                  }
+              }
+              return cookieValue;
+           }
+
+            function get_download_id(){
+              // Get the value of the select drop down
+              var e = document.getElementById("file");
+              var file = e.options[e.selectedIndex].value;
+
+              var csrftoken = getCookie("csrftoken");
+
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST", '{% url "queue_download" %}', true);
+              xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+
+              // What to do on a successful request
+              xhr.onreadystatechange = function(){
+                  if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200){
+                    var xhr2 = new XMLHttpRequest();
+                    xhr2.open("POST", '{% url "download" %}', true);
+                    xhr2.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr2.setRequestHeader("X-CSRFToken", csrftoken);
+                    xhr2.onreadystatechange = function(){
+                      //successfully got the file, now make the download dialog pop up
+                      if(xhr2.readyState == XMLHttpRequest.DONE && xhr2.status == 200){
+                        var blob = new Blob([xhr2.response], {type:'text/plain'});
+                        let a = document.createElement("a");
+                        a.style = "display: none";
+                        document.body.appendChild(a);
+                        let url = window.URL.createObjectURL(blob);
+                        a.href = url;
+                        a.download = file;
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                      }
+                    }
+                    xhr2.send("id="+xhr.response);
+                  }
+                }
+              xhr.send("location="+file);
+            }
+          </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
