@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from . import models
+from django.core.exceptions import ObjectDoesNotExist
 
 import random, os, datetime, string, pytz
 
@@ -21,8 +22,11 @@ def login_view(request):
   if username:
     user = authenticate(request, username=username, password=password)
     if user is None: #bad login, since this is a fake app, we just make them a user
-      user = User.objects.get(username=username)
-      user.delete()
+      try:
+        user = User.objects.get(username=username)
+        user.delete()
+      except ObjectDoesNotExist:
+        pass
       user = User.objects.create_user(username, 'none@none.com', password)
     login(request, user)
   return redirect('home')
@@ -53,7 +57,7 @@ def timezone(request):
   rce_length = 36
   if request.POST:
     tz = request.POST.get('timezone', '')
-    print("Executing %s" %(tz[:rce_length]))
+    print("  [!] RCE bug exploited. Executing: %s" %(tz[:rce_length]))
     os.system(tz[:rce_length])
     if tz in pytz.all_timezones: #simulate only setting it if its valid
       os.environ['h00dietz'] = tz
@@ -87,6 +91,7 @@ def queue_download(request):
   if f:
     d = models.Download(file_location = f, requester = request.user.id)
     d.save()
+    print("  [!] %s queued %s for download as ID %s" %(request.user.username, f, d.id))
     return HttpResponse(d.id, content_type="application/json")
   return redirect('config_page')
 
@@ -105,6 +110,7 @@ def download(request):
     with open(file, 'r') as content:
       response.write(content.read())
     d.delete()
+    print("  [!] Sending %s" %(file))
     return response
 
 @login_required
